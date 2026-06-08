@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار اللغة اليابانية | @Seiyuujap</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d14;
+    --card: #13131f;
+    --border: #2a2a40;
+    --accent: #e8383d;
+    --accent2: #f5a623;
+    --gold: #d4a843;
+    --text: #eee8d8;
+    --muted: #888090;
+    --correct: #2ecc71;
+    --wrong: #e74c3c;
+    --jp-bg: #1a1a2e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Naskh Arabic', serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 16px 60px;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(232,56,61,0.09) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 100%, rgba(245,166,35,0.06) 0%, transparent 55%);
+  }
+
+  /* ─── ACCOUNT ─── */
+  .account-bar { text-align: center; margin-bottom: 28px; }
+  .account-name {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.9rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* ─── INTRO ─── */
+  #intro-screen { max-width: 480px; margin: 0 auto; text-align: center; }
+  .intro-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 32px;
+  }
+  .intro-title span { color: var(--accent); }
+  .intro-divider {
+    width: 60px; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    margin: 14px auto 32px;
+  }
+  .start-btn {
+    background: linear-gradient(135deg, var(--accent), #c0292e);
+    border: none; border-radius: 14px;
+    color: #fff; cursor: pointer;
+    font-family: 'Noto Naskh Arabic', serif;
+    font-size: 1.15rem; font-weight: 700;
+    padding: 16px 48px;
+    width: 100%; max-width: 320px;
+    box-shadow: 0 6px 28px rgba(232,56,61,0.35);
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .start-btn:hover { opacity: 0.9; transform: scale(1.03); }
+  .start-btn:active { transform: scale(0.98); }
+
+  /* ─── QUIZ ─── */
+  #quiz-wrap { display: none; }
+  #quiz-wrap.show { display: block; }
+  .progress-bar-wrap {
+    background: var(--border); border-radius: 6px;
+    height: 6px; margin: 0 auto 22px; max-width: 540px; overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 6px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+  .question-counter {
+    text-align: center; color: var(--muted);
+    font-size: 0.82rem; margin-bottom: 16px;
+  }
+  .question-counter strong { color: var(--accent2); }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; max-width: 540px;
+    margin: 0 auto 20px; padding: 28px 24px 22px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 18px 18px 0 0;
+  }
+  .q-badge {
+    display: inline-flex; align-items: center;
+    background: rgba(232,56,61,0.12); border: 1px solid rgba(232,56,61,0.25);
+    border-radius: 20px; padding: 3px 12px;
+    font-size: 0.78rem; color: var(--accent);
+    margin-bottom: 16px; font-weight: 500;
+  }
+  .jp-word {
+    text-align: center; background: var(--jp-bg);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px 16px 14px; margin-bottom: 20px;
+  }
+  .kanji {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 2.6rem; font-weight: 700; color: var(--text);
+    line-height: 1; display: block;
+  }
+  .furigana {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.85rem; color: var(--gold);
+    margin-top: 6px; display: block; letter-spacing: 2px;
+  }
+  .example-jp {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.88rem; color: var(--muted);
+    margin-top: 10px; direction: ltr; text-align: center; line-height: 1.6;
+  }
+  .question-text {
+    font-size: 1.05rem; font-weight: 500;
+    color: var(--text); margin-bottom: 16px; line-height: 1.7;
+  }
+  .options { display: grid; gap: 10px; }
+  .option-btn {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text); cursor: pointer;
+    font-family: 'Noto Naskh Arabic', serif; font-size: 0.97rem;
+    padding: 13px 16px; text-align: right;
+    transition: background 0.18s, border-color 0.18s, transform 0.1s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .option-btn:hover:not(:disabled) {
+    background: rgba(232,56,61,0.08);
+    border-color: rgba(232,56,61,0.4);
+    transform: translateX(-2px);
+  }
+  .option-btn .opt-label {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--border); display: flex;
+    align-items: center; justify-content: center;
+    font-size: 0.78rem; font-weight: 700; flex-shrink: 0;
+    color: var(--muted); transition: background 0.18s, color 0.18s;
+  }
+  .option-btn:hover:not(:disabled) .opt-label { background: var(--accent); color: #fff; }
+  .option-btn.correct { background: rgba(46,204,113,0.12); border-color: var(--correct); }
+  .option-btn.correct .opt-label { background: var(--correct); color: #fff; }
+  .option-btn.wrong { background: rgba(231,76,60,0.12); border-color: var(--wrong); }
+  .option-btn.wrong .opt-label { background: var(--wrong); color: #fff; }
+  .option-btn:disabled { cursor: default; }
+  .feedback {
+    margin-top: 14px; padding: 10px 14px; border-radius: 8px;
+    font-size: 0.9rem; line-height: 1.6; display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.3); color: #2ecc71; }
+  .feedback.no { background: rgba(231,76,60,0.1); border: 1px solid rgba(231,76,60,0.3); color: #e74c3c; }
+  .nav { display: flex; justify-content: center; margin-top: 16px; }
+  .next-btn {
+    background: linear-gradient(135deg, var(--accent), #c0292e);
+    border: none; border-radius: 10px; color: #fff; cursor: pointer;
+    font-family: 'Noto Naskh Arabic', serif; font-size: 1rem; font-weight: 700;
+    padding: 12px 34px; display: none;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .next-btn:hover { opacity: 0.88; transform: scale(1.02); }
+  .next-btn.show { display: inline-block; }
+
+  /* ─── RESULT ─── */
+  #result-screen { display: none; max-width: 540px; margin: 0 auto; text-align: center; }
+  #result-screen.show { display: block; }
+  .result-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 40px 28px; position: relative; overflow: hidden;
+  }
+  .result-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .result-emoji { font-size: 3.5rem; margin-bottom: 16px; }
+  .result-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; }
+  .result-score { font-size: 3rem; font-weight: 700; color: var(--accent2); line-height: 1; margin: 16px 0 8px; }
+  .result-score span { font-size: 1.2rem; color: var(--muted); }
+  .result-msg { color: var(--muted); font-size: 0.95rem; margin-bottom: 28px; line-height: 1.7; }
+  .restart-btn {
+    background: linear-gradient(135deg, var(--accent), #c0292e);
+    border: none; border-radius: 10px; color: #fff; cursor: pointer;
+    font-family: 'Noto Naskh Arabic', serif; font-size: 1rem; font-weight: 700;
+    padding: 13px 40px; transition: opacity 0.2s;
+  }
+  .restart-btn:hover { opacity: 0.88; }
+  .score-tally { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .tally-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--border); }
+  .tally-dot.ok { background: var(--correct); }
+  .tally-dot.no { background: var(--wrong); }
+</style>
+</head>
+<body>
+
+<!-- Account -->
+<div class="account-bar">
+  <div class="account-name">@Seiyuujap</div>
+</div>
+
+<!-- ═══ INTRO ═══ -->
+<div id="intro-screen">
+  <div class="intro-title">
+    اختبار اللغة اليابانية<br>
+    <span>الجزء الأول</span>
+  </div>
+  <div class="intro-divider"></div>
+  <button class="start-btn" onclick="startQuiz()">اضغط هنا لبدء الاختبار</button>
+</div>
+
+<!-- ═══ QUIZ ═══ -->
+<div id="quiz-wrap">
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+  <div class="question-counter" id="q-counter">السؤال <strong>1</strong> من <strong>10</strong></div>
+  <div id="quiz-area"></div>
+  <div class="nav">
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">السؤال التالي ←</button>
+  </div>
+  <div id="result-screen">
+    <div class="result-card">
+      <div class="result-emoji" id="result-emoji">🎉</div>
+      <div class="result-title">انتهى الاختبار!</div>
+      <div class="result-score" id="result-score">0 <span>/ 10</span></div>
+      <div class="score-tally" id="score-tally"></div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="restart-btn" onclick="restartQuiz()">🔄 إعادة الاختبار</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    kanji: '学校', furigana: 'がっこう', example: '学校へ行きます。',
+    questionText: 'ما معنى كلمة 「学校」؟',
+    options: ['مدرسة', 'مستشفى', 'محطة', 'حديقة'], answer: 0
+  },
+  {
+    kanji: '天気', furigana: 'てんき', example: '今日の天気はいいです。',
+    questionText: 'ما معنى كلمة 「天気」؟',
+    options: ['الوقت', 'الطقس', 'الطعام', 'الطريق'], answer: 1
+  },
+  {
+    kanji: '友達', furigana: 'ともだち', example: '友達と話しました。',
+    questionText: 'ما معنى كلمة 「友達」؟',
+    options: ['الأسرة', 'الأخت', 'الصديق', 'الزميل'], answer: 2
+  },
+  {
+    kanji: '写真', furigana: 'しゃしん', example: '写真を撮りました。',
+    questionText: 'ما معنى كلمة 「写真」؟',
+    options: ['رسالة', 'صورة', 'فيلم', 'كتاب'], answer: 1
+  },
+  {
+    kanji: '家族', furigana: 'かぞく', example: '家族は大切です。',
+    questionText: 'ما معنى كلمة 「家族」؟',
+    options: ['الصديق', 'الدراسة', 'الأسرة', 'الصحة'], answer: 2
+  },
+  {
+    kanji: '心', furigana: 'こころ', example: '心が落ち着きます。',
+    questionText: 'ما معنى كلمة 「心」؟',
+    options: ['الجسد', 'القلب', 'الرأس', 'العين'], answer: 1
+  },
+  {
+    kanji: '雪', furigana: 'ゆき', example: '雪が降っています。',
+    questionText: 'ما معنى كلمة 「雪」؟',
+    options: ['المطر', 'الريح', 'الثلج', 'الشمس'], answer: 2
+  },
+  {
+    kanji: '勉強', furigana: 'べんきょう', example: '毎日勉強します。',
+    questionText: 'ما معنى كلمة 「勉強」؟',
+    options: ['اللعب', 'العمل', 'الطبخ', 'الدراسة'], answer: 3
+  },
+  {
+    kanji: '仕事', furigana: 'しごと', example: '仕事が忙しいです。',
+    questionText: 'ما معنى كلمة 「仕事」؟',
+    options: ['المدرسة', 'العمل', 'البيت', 'السيارة'], answer: 1
+  },
+  {
+    kanji: '電話', furigana: 'でんわ', example: '電話をかけました。',
+    questionText: 'ما معنى كلمة 「電話」؟',
+    options: ['الكمبيوتر', 'الرسالة', 'الهاتف', 'التلفزيون'], answer: 2
+  }
+];
+
+let current = 0, score = 0, answers = [], answered = false;
+const TOTAL = questions.length;
+
+function startQuiz() {
+  document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('quiz-wrap').classList.add('show');
+  buildQuestion(0);
+}
+
+function buildQuestion(idx) {
+  const q = questions[idx];
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = '';
+  document.getElementById('result-screen').classList.remove('show');
+  const labels = ['أ', 'ب', 'ج', 'د'];
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="q-badge">السؤال ${idx + 1}</div>
+    <div class="jp-word">
+      <span class="kanji">${q.kanji}</span>
+      <span class="furigana">${q.furigana}</span>
+      <div class="example-jp">${q.example}</div>
+    </div>
+    <div class="question-text">${q.questionText}</div>
+    <div class="options">
+      ${q.options.map((opt, i) => `
+        <button class="option-btn" onclick="selectAnswer(${i})">
+          <span class="opt-label">${labels[i]}</span>${opt}
+        </button>`).join('')}
+    </div>
+    <div class="feedback" id="fb"></div>
+  `;
+  area.appendChild(card);
+  answered = false;
+  updateProgress(idx);
+  document.getElementById('q-counter').innerHTML =
+    `السؤال <strong>${idx + 1}</strong> من <strong>${TOTAL}</strong>`;
+  document.getElementById('next-btn').classList.remove('show');
+}
+
+function selectAnswer(chosen) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  const ok = chosen === q.answer;
+  if (ok) score++;
+  answers.push(ok);
+  btns[chosen].classList.add(ok ? 'correct' : 'wrong');
+  if (!ok) btns[q.answer].classList.add('correct');
+  const fb = document.getElementById('fb');
+  fb.className = `feedback show ${ok ? 'ok' : 'no'}`;
+  fb.innerHTML = ok
+    ? `✅ إجابة صحيحة! المعنى: <strong>${q.options[q.answer]}</strong>`
+    : `❌ الإجابة الصحيحة هي: <strong>${q.options[q.answer]}</strong>`;
+  const nb = document.getElementById('next-btn');
+  nb.textContent = current === TOTAL - 1 ? 'عرض النتيجة 🏁' : 'السؤال التالي ←';
+  nb.classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  if (current < TOTAL) buildQuestion(current);
+  else showResult();
+}
+
+function updateProgress(idx) {
+  document.getElementById('progress-bar').style.width = (idx / TOTAL * 100) + '%';
+}
+
+function showResult() {
+  document.getElementById('quiz-area').innerHTML = '';
+  document.getElementById('next-btn').classList.remove('show');
+  document.getElementById('q-counter').style.display = 'none';
+  document.getElementById('progress-bar').style.width = '100%';
+  document.getElementById('result-screen').classList.add('show');
+  document.getElementById('result-score').innerHTML = `${score} <span>/ ${TOTAL}</span>`;
+  document.getElementById('score-tally').innerHTML =
+    answers.map(a => `<div class="tally-dot ${a ? 'ok' : 'no'}"></div>`).join('');
+  const p = score / TOTAL;
+  let emoji, msg;
+  if (p === 1)      { emoji = '🏆'; msg = 'ممتاز! علامة كاملة، أنت نجم!'; }
+  else if (p >= .8) { emoji = '🎉'; msg = 'رائع! أداء ممتاز جداً.'; }
+  else if (p >= .6) { emoji = '👍'; msg = 'جيد! راجع الكلمات التي أخطأت فيها.'; }
+  else if (p >= .4) { emoji = '📚'; msg = 'تحتاج مراجعة أكثر. لا تستسلم!'; }
+  else              { emoji = '💪'; msg = 'شاهد المقطع مجدداً وحاول ثانية!'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+}
+
+function restartQuiz() {
+  current = 0; score = 0; answers = []; answered = false;
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('q-counter').style.display = 'block';
+  buildQuestion(0);
+}
+</script>
+</body>
+</html>
